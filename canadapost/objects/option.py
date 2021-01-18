@@ -1,4 +1,6 @@
-from .base import CPObject, TextField, ObjectField, BooleanField, LinkField, CollectionField
+from .base import (
+    CPObject, TextField, ObjectField, BooleanField, LinkField, CollectionField
+)
 from .qualifier import Qualifier
 
 
@@ -10,6 +12,9 @@ class Option(CPObject):
         "name": TextField('option-name'),
         "price": TextField('option-price'),
         "amount": TextField('option-amount'),
+        "qualifier_1": BooleanField('option-qualifier-1'),
+        "qualifier_2": TextField('option-qualifier-2'),
+
         "qualifier": ObjectField('qualifier', format=Qualifier),
         "qualifier_required": BooleanField('qualifier-required'),
         "mandatory": BooleanField("mandatory"),
@@ -18,9 +23,13 @@ class Option(CPObject):
         "option": LinkField('option'),
         "option_class": TextField("option-class"),
         "conflicting_options": CollectionField(
-            'conflicting-options', child_name='option-code', field_type=TextField
+            'conflicting-options',
+            child_name='option-code',
+            field_type=TextField
         ),
         "prerequisite_options": CollectionField(
-            'prerequisite-options', child_name='option-code', field_type=TextField
+            'prerequisite-options',
+            child_name='option-code',
+            field_type=TextField
         )
     }
