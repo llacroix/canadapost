@@ -1,18 +1,14 @@
-from .base import CPObject
+from .base import CPObject, TextField, ObjectField
+from .qualifier import Qualifier
 
 
 class Option(CPObject):
     _name = 'option'
 
-    def __init__(self, code, name, price):
-        self.code = code
-        self.name = name
-        self.price = price
-
-    @classmethod
-    def from_xml(cls, node):
-        code = node.find('option-code').text
-        name = node.find('option-name').text
-        price = node.find('option-price').text
-        price = float(price)
-        return Option(code, name, price)
+    _fields = {
+        "code": TextField('option-code'),
+        "name": TextField('option-name'),
+        "price": TextField('option-price'),
+        "amount": TextField('option-amount'),
+        "qualifier": ObjectField('qualifier', format=Qualifier),
+    }

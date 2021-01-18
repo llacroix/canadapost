@@ -15,41 +15,53 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from .base import CPObject
+from .base import CPObject, TextField, ObjectField, CollectionField
 from .taxes import Taxes
-from .options import Options
-from .adjustments import Adjustments
+from .option import Option
+from .adjustment import Adjustment
 
 
 class PriceDetails(CPObject):
     _name = 'price-details'
 
-    def __init__(self, base, due, taxes, options, adjustments):
-        self.base = base
-        self.due = due
-        self.taxes = taxes
-        self.options = options
-        self.adjustments = adjustments
+    _fields = {
+        "base": TextField('base', format=float),
+        "due": TextField('due', format=float),
+        "taxes": ObjectField('taxes', format=Taxes),
+        "options": CollectionField(
+            'options', child_name='option', format=Option
+        ),
+        "adjustments": CollectionField(
+            'adjustments', child_name='adjustment', format=Adjustment
+        ),
+    }
 
-    @classmethod
-    def from_xml(cls, node):
-        base = float(node.xpath('//base')[0].text),
-        due = float(node.xpath('//due')[0].text),
-        taxes = Taxes.from_xml(node.find('taxes')),
-        options = Options.from_xml(node.find('options'))
-        adjustments = Adjustments.from_xml(node.find('adjustments'))
-
-        return PriceDetails(
-            base,
-            due,
-            taxes,
-            options,
-            adjustments
-        )
-
-    def to_xml(self):
-        elem = self.get_element()
-
-        elem.append(self.adjustments.to_xml())
-
-        return elem
+#   def __init__(self, base, due, taxes, options, adjustments):
+#       self.base = base
+#       self.due = due
+#       self.taxes = taxes
+#       self.options = options
+#       self.adjustments = adjustments
+#
+#   @classmethod
+#   def from_xml(cls, node):
+#       base = float(node.xpath('//base')[0].text),
+#       due = float(node.xpath('//due')[0].text),
+#       taxes = Taxes.from_xml(node.find('taxes')),
+#       options = Options.from_xml(node.find('options'))
+#       adjustments = Adjustments.from_xml(node.find('adjustments'))
+#
+#       return PriceDetails(
+#           base,
+#           due,
+#           taxes,
+#           options,
+#           adjustments
+#       )
+#
+#   def to_xml(self):
+#       elem = self.get_element()
+#
+#       elem.append(self.adjustments.to_xml())
+#
+#       return elem
