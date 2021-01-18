@@ -1,15 +1,17 @@
 from lxml.etree import Element
 from .base import CPObject
 from .price_details import PriceDetails
+from .service_standard import ServiceStandard
 
 
 class PriceQuote(CPObject):
     _name = 'price-quote'
 
-    def __init__(self, code, name, details):
+    def __init__(self, code, name, details, service_standard):
         self.code = code
         self.name = name
         self.details = details
+        self.service_standard = service_standard
 
     @classmethod
     def from_xml(cls, node, ns):
@@ -21,10 +23,16 @@ class PriceQuote(CPObject):
             ns
         )
 
+        service_standard = ServiceStandard.from_xml(
+            node.find('cp:service-standard', namespaces=ns),
+            ns
+        )
+
         return PriceQuote(
             code,
             name,
-            details
+            details,
+            service_standard
         )
 
     def to_xml(self):
@@ -39,5 +47,7 @@ class PriceQuote(CPObject):
         elem.append(name)
 
         elem.append(self.details.to_xml())
+
+        elem.append(self.service_standard.to_xml())
 
         return elem

@@ -1,4 +1,11 @@
+from lxml import etree
 from lxml.etree import Element
+
+
+def remove_xmlns(root):
+    for elem in root:
+        elem.tag = etree.QName(elem).localname
+    etree.cleanup_namespaces(root)
 
 
 class CPObject(object):
