@@ -32,15 +32,12 @@ class PriceDetails(CPObject):
         self.adjustments = adjustments
 
     @classmethod
-    def from_xml(cls, node, ns):
-        base = float(node.xpath('//cp:base', namespaces=ns)[0].text),
-        due = float(node.xpath('//cp:due', namespaces=ns)[0].text),
-        taxes = Taxes.from_xml(node.find('cp:taxes', namespaces=ns), ns),
-        options = Options.from_xml(node.find('cp:options', namespaces=ns), ns)
-        adjustments = Adjustments.from_xml(
-            node.find('cp:adjustments', namespaces=ns),
-            ns
-        )
+    def from_xml(cls, node):
+        base = float(node.xpath('//base')[0].text),
+        due = float(node.xpath('//due')[0].text),
+        taxes = Taxes.from_xml(node.find('taxes')),
+        options = Options.from_xml(node.find('options'))
+        adjustments = Adjustments.from_xml(node.find('adjustments'))
 
         return PriceDetails(
             base,

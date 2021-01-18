@@ -4,6 +4,8 @@ from ..exceptions import (
     CanadaPostThrottleException
 )
 
+from ..objects.base import remove_xmlns
+
 
 class Client(object):
 
@@ -43,14 +45,14 @@ class Client(object):
 
     def map_server_error(self, content):
         tree = etree.fromstring(content)
-        ns = {
-            "cp": "http://www.canadapost.ca/ws/messages"
-        }
+        # ns = {
+        #    "cp": "http://www.canadapost.ca/ws/messages"
+        # }
 
-        code = tree.xpath('//cp:message/cp:code', namespaces=ns)[0].text
-        description = tree.xpath(
-            '//cp:message/cp:description', namespaces=ns
-        )[0].text
+        remove_xmlns(tree)
+
+        code = tree.xpath('//message/code')[0].text
+        description = tree.xpath('//message/description',)[0].text
 
         if code == 'server':
             raise CanadaPostThrottleException(code, description)

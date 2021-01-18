@@ -14,18 +14,16 @@ class PriceQuote(CPObject):
         self.service_standard = service_standard
 
     @classmethod
-    def from_xml(cls, node, ns):
-        code = node.find('cp:service-code', namespaces=ns).text
-        name = node.find('cp:service-name', namespaces=ns).text
+    def from_xml(cls, node):
+        code = node.find('service-code').text
+        name = node.find('service-name').text
 
         details = PriceDetails.from_xml(
-            node.find('cp:price-details', namespaces=ns),
-            ns
+            node.find('price-details')
         )
 
         service_standard = ServiceStandard.from_xml(
-            node.find('cp:service-standard', namespaces=ns),
-            ns
+            node.find('service-standard')
         )
 
         return PriceQuote(

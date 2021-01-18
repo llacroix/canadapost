@@ -10,9 +10,9 @@ class Option(CPObject):
         self.price = price
 
     @classmethod
-    def from_xml(cls, node, ns):
-        code = node.find('cp:option-code', namespaces=ns).text
-        name = node.find('cp:option-name', namespaces=ns).text
-        price = node.find('cp:option-price', namespaces=ns).text
+    def from_xml(cls, node):
+        code = node.find('option-code').text
+        name = node.find('option-name').text
+        price = node.find('option-price').text
         price = float(price)
         return Option(code, name, price)

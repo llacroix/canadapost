@@ -1,7 +1,6 @@
 from .base import BaseApi, method
 from ..https import Methods
 from ..objects.price_quotes import PriceQuotes
-from lxml import etree
 
 
 class NonContractShipping(BaseApi):
@@ -13,6 +12,5 @@ class NonContractShipping(BaseApi):
         method=Methods.POST
     )
     def get_rates(self, data, ns):
-        print(data)
-        node = etree.fromstring(data)
-        return PriceQuotes.from_xml(node, ns)
+        node = self.parse_xml(data)
+        return PriceQuotes.from_xml(node)

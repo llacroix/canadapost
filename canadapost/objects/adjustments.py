@@ -12,12 +12,10 @@ class Adjustments(CPObject):
         }
 
     @classmethod
-    def from_xml(cls, node, ns):
+    def from_xml(cls, node):
         adjustments = [
-            Adjustment.from_xml(adjustment, ns)
-            for adjustment in node.xpath(
-                './/cp:adjustment', namespaces=ns
-            )
+            Adjustment.from_xml(adjustment)
+            for adjustment in node.xpath('.//adjustment')
         ]
 
         return Adjustments(adjustments)

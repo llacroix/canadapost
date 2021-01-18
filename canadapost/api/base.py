@@ -1,4 +1,6 @@
+from lxml import etree
 from ..https import Methods
+from ..objects.base import remove_xmlns
 
 
 class Request(object):
@@ -28,6 +30,11 @@ class BaseApi(object):
 
     def elems(self, data, xpath, ns):
         return data.xpath(xpath, namespaces=ns)
+
+    def parse_xml(self, data):
+        node = etree.fromstring(data)
+        remove_xmlns(node)
+        return node
 
 
 def make_ns(namespace):

@@ -12,12 +12,10 @@ class Options(CPObject):
         }
 
     @classmethod
-    def from_xml(cls, node, ns):
+    def from_xml(cls, node):
         options = [
-            Option.from_xml(option, ns)
-            for option in node.xpath(
-                './/cp:option', namespaces=ns
-            )
+            Option.from_xml(option)
+            for option in node.xpath('.//option')
         ]
 
         return Options(options)

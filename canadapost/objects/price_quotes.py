@@ -12,10 +12,10 @@ class PriceQuotes(CPObject):
         }
 
     @classmethod
-    def from_xml(cls, node, ns):
+    def from_xml(cls, node):
         quotes = [
-            PriceQuote.from_xml(quote_node, ns)
-            for quote_node in node.xpath('.//cp:price-quote', namespaces=ns)
+            PriceQuote.from_xml(quote_node)
+            for quote_node in node.xpath('.//price-quote')
         ]
 
         return PriceQuotes(quotes)

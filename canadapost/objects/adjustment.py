@@ -11,22 +11,13 @@ class Adjustment(CPObject):
         self.qualifier = qualifier
 
     @classmethod
-    def from_xml(cls, node, ns):
-        code = node.find('cp:adjustment-code', namespaces=ns).text
-        name = node.find('cp:adjustment-name', namespaces=ns).text
+    def from_xml(cls, node):
+        code = node.find('adjustment-code').text
+        name = node.find('adjustment-name').text
         qualifier = {}
 
-        if (
-            len(
-                node.xpath(
-                    './/cp:adjustment-qualifier/cp:percent',
-                    namespaces=ns
-                )
-            ) > 0
-        ):
-            percent = node.xpath(
-                './/cp:percent', namespaces=ns
-            )[0].text
+        if len(node.xpath('.//adjustment-qualifier/percent')) > 0:
+            percent = node.xpath('.//percent')[0].text
             qualifier['percent'] = float(percent)
 
         return Adjustment(

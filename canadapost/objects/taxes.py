@@ -11,13 +11,17 @@ class Taxes(CPObject):
         self.hst = hst
 
     @classmethod
-    def from_xml(cls, node, ns):
-        gst = CPObject.get_float(node, 'cp:gst', ns)
-        gst_percent = float(
-            node.find('cp:gst', namespaces=ns).attrib['percent']
-        )
-        hst = CPObject.get_float(node, 'cp:hst', ns)
-        pst = CPObject.get_float(node, 'cp:pst', ns)
+    def from_xml(cls, node):
+        gst = CPObject.get_float(node, 'gst')
+        gst_node = node.find('gst')
+
+        if 'percent' in gst_node.attrib:
+            gst_percent = float(gst_node.attrib['percent'])
+        else:
+            gst_percent = None
+
+        hst = CPObject.get_float(node, 'hst')
+        pst = CPObject.get_float(node, 'pst')
 
         return Taxes(
             gst,

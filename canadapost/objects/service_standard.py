@@ -19,18 +19,22 @@ class ServiceStandard(CPObject):
         self.expected_delivery_date = expected_delivery_date
 
     @classmethod
-    def from_xml(cls, node, ns):
-        am_delivery = node.find('cp:am-delivery', namespaces=ns).text
+    def from_xml(cls, node):
+        am_delivery = node.find('am-delivery').text
         am_delivery = am_delivery == 'true'
 
-        guaranteed_delivery = node.find('cp:guaranteed-delivery', namespaces=ns).text
+        guaranteed_delivery = node.find('guaranteed-delivery').text
         guaranteed_delivery = guaranteed_delivery == 'true'
 
-        expected_transit_time = node.find('cp:expected-transit-time', namespaces=ns).text
-        expected_transit_time = float(expected_transit_time)
+        expected_transit_time = node.find('expected-transit-time').text
+        expected_transit_time = float(
+            expected_transit_time
+        )
 
-        expected_delivery_date = node.find('cp:expected-delivery-date', namespaces=ns).text
-        expected_delivery_date = datetime.strptime(expected_delivery_date, '%Y-%m-%d')
+        expected_delivery_date = node.find('expected-delivery-date').text
+        expected_delivery_date = datetime.strptime(
+            expected_delivery_date, '%Y-%m-%d'
+        )
 
         return ServiceStandard(
             am_delivery,
