@@ -25,10 +25,9 @@ class AsyncClient(Client):
                     auth=BasicAuth(self.username, self.password)
                 )
             elif request.method == Methods.GET:
-                response = await self.session.post(
+                response = await self.session.get(
                     url,
                     params=request.params,
-                    data=request.data,
                     headers=request.headers,
                     auth=BasicAuth(self.username, self.password)
                 )

@@ -181,11 +181,38 @@ class DateField(BaseField):
 class ObjectField(BaseField):
 
     def to_xml(self, value):
+        if not value:
+            return
         return value.to_xml()
 
     def from_xml(self, node):
         node = node.find(self.name)
+        if node is None:
+            return
         return self.format.from_xml(node)
+
+
+class LinkField(BaseField):
+
+    def from_xml(self, node):
+        node = node.find('link[@rel="%s"]' % (self.name,))
+        if node is not None:
+            return {
+                "href": node.attrib['href'],
+                "media-type": node.attrib['media-type'],
+                "rel": node.attrib['rel']
+            }
+
+    def to_xml(self, value):
+        if not value:
+            return
+
+        elem = Element('link')
+        elem.attrib['href'] = value['href']
+        elem.attrib['media-type'] = value['media-type']
+        elem.attrib['rel'] = value['rel']
+
+        return elem
 
 
 class CollectionField(BaseField):
@@ -197,6 +224,7 @@ class CollectionField(BaseField):
         default=None,
         allow_empty=False,
         child_name=None,
+        field_type=None
     ):
         super(CollectionField, self).__init__(
             name=name,
@@ -206,15 +234,28 @@ class CollectionField(BaseField):
             allow_empty=allow_empty,
         )
         self.child_name = child_name
+        self.field_type = field_type
 
     def to_xml(self, value):
         if not value:
             return None
 
-        nodes = [
-            val.to_xml()
-            for val in value
-        ]
+        if self.format:
+            nodes = [
+                val.to_xml()
+                for val in value
+            ]
+        elif self.field_type:
+            if self.child_name:
+                child_name = self.child_name
+            else:
+                child_name = self.name
+            formatter = self.field_type(child_name)
+
+            nodes = [
+                formatter.to_xml(val)
+                for val in value
+            ]
 
         if not self.child_name:
             return nodes
@@ -238,9 +279,54 @@ class CollectionField(BaseField):
         else:
             child_name = self.name
 
-        values = [
-            self.format.from_xml(sub_node)
-            for sub_node in node.xpath('.//%s' % (child_name))
-        ]
-
+        if self.format:
+            values = [
+                self.format.from_xml(sub_node)
+                for sub_node in node.xpath('.//%s' % (child_name))
+                if sub_node is not None
+            ]
+        elif self.field_type:
+            formatter = self.field_type(child_name)
+            values = [
+                formatter.parse_value(sub_node)
+                for sub_node in node.xpath('.//%s' % (child_name))
+                if sub_node is not None
+            ]
         return values
+
+
+class RangeField(BaseField):
+    def from_xml(self, node):
+        if node is None:
+            return
+
+        node = node.find(self.name)
+
+        if node is None:
+            return
+
+        min_val = node.attrib.get('min', None)
+        if min_val:
+            min_val = float(min_val)
+
+        max_val = node.attrib.get('max', None)
+        if max_val:
+            max_val = float(max_val)
+
+        return {
+            "min": min_val,
+            "max": max_val
+        }
+
+    def to_xml(self, value):
+        if not value:
+            return
+        elem = Element(self.name)
+
+        if 'min' in value and value['min'] is not None:
+            elem.attrib['min'] = str(value['min'])
+
+        if 'max' in value and value['max'] is not None:
+            elem.attrib['max'] = str(value['max'])
+
+        return elem

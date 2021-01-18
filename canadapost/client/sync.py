@@ -17,15 +17,15 @@ class SyncClient(Client):
                 auth=(self.username, self.password)
             )
         elif request.method == Methods.GET:
-            req = requests.post(
+            req = requests.get(
                 url,
                 params=request.params,
-                data=request.data,
+                # data=request.data,
                 headers=request.headers,
                 auth=(self.username, self.password)
             )
 
-        print(req.status_code, req.content)
+        print(req.status_code, req.content, url)
 
         if req.status_code != 200:
             return self.map_server_error(req.content)
