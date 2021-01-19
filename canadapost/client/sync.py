@@ -25,6 +25,8 @@ class SyncClient(Client):
                 auth=(self.username, self.password)
             )
 
+        print(url)
+
         if req.status_code != 200:
             return self.map_server_error(req.content)
 

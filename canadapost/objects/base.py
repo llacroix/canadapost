@@ -192,6 +192,29 @@ class ObjectField(BaseField):
         return self.format.from_xml(node)
 
 
+class LinksField(BaseField):
+
+    def from_xml(self, node):
+        # node = node.find('link[@rel="%s"]' % (self.name,))
+        if node is not None:
+            return {
+                "href": node.attrib['href'],
+                "media-type": node.attrib['media-type'],
+                "rel": node.attrib['rel']
+            }
+
+    def to_xml(self, value):
+        if not value:
+            return
+
+        elem = Element('link')
+        elem.attrib['href'] = value['href']
+        elem.attrib['media-type'] = value['media-type']
+        elem.attrib['rel'] = value['rel']
+
+        return elem
+
+
 class LinkField(BaseField):
 
     def from_xml(self, node):
@@ -287,11 +310,25 @@ class CollectionField(BaseField):
             ]
         elif self.field_type:
             formatter = self.field_type(child_name)
-            values = [
-                formatter.parse_value(sub_node)
-                for sub_node in node.xpath('.//%s' % (child_name))
-                if sub_node is not None
-            ]
+            # TODO improve in a way that field can be reused without hacks
+            # The main use was for loading
+            # <option-code>a</option-code> as leaf values
+            # but this also got used to load links collection which aren't
+            # structured elements
+            # so parse value doesn't exactly work
+            try:
+                values = [
+                    formatter.parse_value(sub_node)
+                    for sub_node in node.xpath('.//%s' % (child_name))
+                    if sub_node is not None
+                ]
+            except Exception:
+                values = [
+                    formatter.from_xml(sub_node)
+                    for sub_node in node.xpath('.//%s' % (child_name))
+                    if sub_node is not None
+                ]
+
         return values
 
 

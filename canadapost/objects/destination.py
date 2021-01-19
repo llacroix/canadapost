@@ -9,7 +9,7 @@ class Destination(CPObject):
     _fields = {
         # NonContractShipping
         "name": TextField("name"),
-        "company": TextField("name"),
+        "company": TextField("company"),
         "additional_addess_info": TextField("additional-addess-info"),
         "client_voice_number": TextField("client-voice-number"),
         "address_details": ObjectField("address-details", AddressDetails),

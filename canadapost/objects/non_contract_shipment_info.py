@@ -1,4 +1,4 @@
-from .base import CPObject, TextField, CollectionField, LinkField
+from .base import CPObject, TextField, CollectionField, LinksField
 
 
 class NonContractShipmentInfo(CPObject):
@@ -10,6 +10,6 @@ class NonContractShipmentInfo(CPObject):
         'id': TextField('shipment-id'),
         'tracking_pin': TextField('tracking-pin'),
         'links': CollectionField(
-            'links', child_name='link', field_type=LinkField
+            'links', child_name='link', field_type=LinksField
         )
     }
