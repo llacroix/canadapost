@@ -20,3 +20,9 @@ def canadapost_sync_client():
 def rating_api(canadapost_sync_client):
     from canadapost.api.rating import Rating
     return Rating(canadapost_sync_client)
+
+
+@pytest.fixture
+def non_contract_api(canadapost_sync_client):
+    from canadapost.api.non_contract import NonContract
+    return NonContract(canadapost_sync_client)
