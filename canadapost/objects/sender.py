@@ -9,5 +9,7 @@ class Sender(CPObject):
         "name": TextField("name"),
         "company": TextField("company"),
         "contact_phone": TextField("contact-phone"),
-        "address_details": ObjectField("address-details", AddressDetails),
+        "address_details": ObjectField(
+            "address-details", format=AddressDetails
+        ),
     }

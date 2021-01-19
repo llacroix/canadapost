@@ -53,3 +53,61 @@ def test_create_shipment(non_contract_api):
     )
 
     assert isinstance(shipment_info, NonContractShipmentInfo) is True
+
+
+def test_get_shipments_by_tracking_pin(non_contract_api):
+    from canadapost.objects.non_contract_shipments import NonContractShipments
+
+    test_pin = "123456789012"
+
+    shipments = non_contract_api.get_shipments(
+        params={
+            "trackingPIN": test_pin
+        }
+    )
+
+    assert isinstance(shipments, NonContractShipments) is True
+    assert len(shipments.links) == 1
+    assert shipments.links[0].get('rel') == 'shipment'
+
+
+def test_get_shipments_by_date(non_contract_api):
+    from canadapost.objects.non_contract_shipments import NonContractShipments
+
+    shipments = non_contract_api.get_shipments(
+        params={
+            "from": "202001010100"
+        }
+    )
+
+    assert isinstance(shipments, NonContractShipments) is True
+
+    assert len(shipments.links) > 1
+    for link in shipments.links:
+        assert link.get('rel') == 'shipment'
+        assert link.get('href') is not None
+        assert len(link.get('href')) > 0
+
+
+def test_get_shipment_details(non_contract_api):
+    from canadapost.objects.non_contract_shipment_details import (
+        NonContractShipmentDetails
+    )
+    test_pin = "123456789012"
+
+    shipment_links = non_contract_api.get_shipments(
+        params={
+            "trackingPIN": test_pin
+        }
+    )
+
+    shipment_url = shipment_links.links[0].get('href')
+    shipment_id = shipment_url.split('/')[-1]
+
+    shipment_details = non_contract_api.get_shipment_details(
+        params={
+            "shipment_id": shipment_id
+        }
+    )
+
+    assert isinstance(shipment_details, NonContractShipmentDetails) is True

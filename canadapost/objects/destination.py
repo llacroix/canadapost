@@ -12,7 +12,9 @@ class Destination(CPObject):
         "company": TextField("company"),
         "additional_addess_info": TextField("additional-addess-info"),
         "client_voice_number": TextField("client-voice-number"),
-        "address_details": ObjectField("address-details", AddressDetails),
+        "address_details": ObjectField(
+            "address-details", format=AddressDetails
+        ),
         # Rating
         "domestic": ObjectField('domestic', format=Domestic),
     }
