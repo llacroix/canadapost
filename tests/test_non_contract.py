@@ -2,6 +2,7 @@ from lxml import etree
 
 import pytest
 from fixtures import *
+from datetime import datetime
 
 
 def test_create_shipment(non_contract_api):
@@ -111,3 +112,61 @@ def test_get_shipment_details(non_contract_api):
     )
 
     assert isinstance(shipment_details, NonContractShipmentDetails) is True
+
+
+def test_get_shipment(non_contract_api):
+    from canadapost.objects.non_contract_shipment_info import (
+        NonContractShipmentInfo
+    )
+    test_pin = "123456789012"
+
+    shipment_links = non_contract_api.get_shipments(
+        params={
+            "trackingPIN": test_pin
+        }
+    )
+
+    shipment_url = shipment_links.links[0].get('href')
+    shipment_id = shipment_url.split('/')[-1]
+
+    shipment_details = non_contract_api.get_shipment(
+        params={
+            "shipment_id": shipment_id
+        }
+    )
+
+    assert isinstance(shipment_details, NonContractShipmentInfo) is True
+
+
+def test_get_shipment_refund(non_contract_api):
+    from canadapost.objects.non_contract_shipment_refund_request import (
+        NonContractShipmentRefundRequest
+    )
+    from canadapost.objects.non_contract_shipment_refund_request_info import (
+        NonContractShipmentRefundRequestInfo
+    )
+    test_pin = "123456789012"
+
+    shipment_links = non_contract_api.get_shipments(
+        params={
+            "trackingPIN": test_pin
+        }
+    )
+
+    shipment_url = shipment_links.links[0].get('href')
+    shipment_id = shipment_url.split('/')[-1]
+
+    refund = NonContractShipmentRefundRequest(
+        email="name@example.com"
+    )
+
+    refund_info = non_contract_api.refund(
+        data=etree.tostring(refund.to_xml(set_xmlns=True)).decode(),
+        params={
+            "shipment_id": shipment_id
+        }
+    )
+    RefundInfo = NonContractShipmentRefundRequestInfo
+    assert isinstance(refund_info, RefundInfo) is True
+    assert refund_info.id == '0123456789'
+    assert refund_info.date == datetime.now().strftime('%Y-%m-%d')
