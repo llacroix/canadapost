@@ -4,11 +4,13 @@ from .parcel_characteristics import ParcelCharacteristics
 from .options import Option
 from .destination import Destination
 from .sender import Sender
+from .recipient import Recipient
 from .notification import Notification
 from .references import References
 from .preferences import Preferences
 from .customs import Customs
 from .settlement_info import SettlementInfo
+from .cod_remittance import CodRemittance
 
 
 class DeliverySpec(CPObject):
@@ -21,6 +23,9 @@ class DeliverySpec(CPObject):
         ),
         "destination": ObjectField(
             'destination', format=Destination
+        ),
+        "recipient": ObjectField(
+            'recipient', format=Recipient
         ),
         "options": CollectionField(
             'options', child_name='option', format=Option
@@ -42,5 +47,8 @@ class DeliverySpec(CPObject):
         ),
         "settlement_info": ObjectField(
             'settlement-info', format=SettlementInfo,
-        )
+        ),
+        "cod_remittance": ObjectField(
+            'cod-remittance', format=CodRemittance,
+        ),
     }
